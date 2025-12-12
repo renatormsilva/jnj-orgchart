@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test outputs
+playwright-report/
+test-results/
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Challenge files (internal use only)
+challenge.md
+brand-guide.md
+brand-guidelines.pdf
+IMPLEMENTATION_GUIDE.md
+GAP_ANALYSIS.md
+org-chart-people-100.json
+
+# Misc
+nul
+.claude/
+*.tgz
