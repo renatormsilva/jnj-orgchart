@@ -1,0 +1,41 @@
+# ============================================
+# J&J OrgChart API - Docker Compose (Supabase)
+# ============================================
+# This compose file runs only the API service
+# Database is hosted on Supabase
+
+version: '3.8'
+
+services:
+  # API Application
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jj-orgchart-api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOST: 0.0.0.0
+      # Use your Supabase DATABASE_URL here
+      DATABASE_URL: ${DATABASE_URL}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+      API_PREFIX: ${API_PREFIX:-/api/v1}
+    ports:
+      - "${PORT:-3000}:3000"
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - jj-network
+
+networks:
+  jj-network:
+    driver: bridge

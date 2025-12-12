@@ -1,0 +1,94 @@
+// ============================================
+// J&J OrgChart Database Schema
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// Person Model - Core Entity
+// ============================================
+model Person {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(255)
+  jobTitle    String   @map("job_title") @db.VarChar(255)
+  department  String   @db.VarChar(100)
+  managerId   Int?     @map("manager_id")
+  photoPath   String?  @map("photo_path") @db.VarChar(500)
+  type        PersonType @default(Employee)
+  status      PersonStatus @default(Active)
+  email       String?  @db.VarChar(255)
+  phone       String?  @db.VarChar(50)
+  location    String?  @db.VarChar(255)
+  hireDate    DateTime? @map("hire_date")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Self-referential relation for hierarchy
+  manager     Person?  @relation("ManagerReports", fields: [managerId], references: [id], onDelete: SetNull)
+  directReports Person[] @relation("ManagerReports")
+
+  @@index([managerId])
+  @@index([department])
+  @@index([type])
+  @@index([status])
+  @@index([name])
+  @@map("people")
+}
+
+// ============================================
+// Enums
+// ============================================
+enum PersonType {
+  Employee
+  Partner
+}
+
+enum PersonStatus {
+  Active
+  Inactive
+}
+
+// ============================================
+// Event Log - For Event Sourcing
+// ============================================
+model EventLog {
+  id            String   @id @default(uuid())
+  eventType     String   @map("event_type") @db.VarChar(100)
+  aggregateId   String   @map("aggregate_id") @db.VarChar(100)
+  aggregateType String   @map("aggregate_type") @db.VarChar(100)
+  payload       Json
+  metadata      Json?
+  occurredAt    DateTime @default(now()) @map("occurred_at")
+
+  @@index([eventType])
+  @@index([aggregateId])
+  @@index([occurredAt])
+  @@map("event_logs")
+}
+
+// ============================================
+// Audit Log - For Tracking Changes
+// ============================================
+model AuditLog {
+  id          String   @id @default(uuid())
+  entityType  String   @map("entity_type") @db.VarChar(100)
+  entityId    String   @map("entity_id") @db.VarChar(100)
+  action      String   @db.VarChar(50)
+  oldValue    Json?    @map("old_value")
+  newValue    Json?    @map("new_value")
+  performedBy String?  @map("performed_by") @db.VarChar(255)
+  performedAt DateTime @default(now()) @map("performed_at")
+  ipAddress   String?  @map("ip_address") @db.VarChar(50)
+  userAgent   String?  @map("user_agent") @db.VarChar(500)
+
+  @@index([entityType, entityId])
+  @@index([performedAt])
+  @@map("audit_logs")
+}

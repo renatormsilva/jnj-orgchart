@@ -1,0 +1,342 @@
+// ============================================
+// Person Routes - Presentation Layer
+// ============================================
+
+import { FastifyInstance, FastifyPluginOptions } from 'fastify';
+import { personController } from '../controllers/PersonController';
+
+export const personRoutes = async (fastify: FastifyInstance, _options: FastifyPluginOptions): Promise<void> => {
+  // ==========================================
+  // GET /people - List all people
+  // ==========================================
+  fastify.get('/people', {
+    schema: {
+      tags: ['People'],
+      summary: 'List all people',
+      description: 'Get a paginated list of all people with optional filtering and sorting',
+      querystring: {
+        type: 'object',
+        properties: {
+          page: { type: 'string', default: '1', description: 'Page number' },
+          limit: { type: 'string', default: '10', description: 'Items per page (max 100)' },
+          search: { type: 'string', description: 'Search by name, job title, or email' },
+          department: { type: 'string', description: 'Filter by department' },
+          managerId: {
+            type: 'string',
+            description: 'Filter by manager ID (use "null" for no manager)',
+          },
+          type: { type: 'string', enum: ['Employee', 'Partner'], description: 'Filter by type' },
+          status: { type: 'string', enum: ['Active', 'Inactive'], description: 'Filter by status' },
+          sortBy: {
+            type: 'string',
+            enum: ['name', 'jobTitle', 'department', 'createdAt', 'updatedAt'],
+            description: 'Field to sort by',
+          },
+          sortOrder: { type: 'string', enum: ['asc', 'desc'], default: 'asc' },
+        },
+      },
+      response: {
+        200: {
+          description: 'Successful response',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            data: { type: 'array', items: { $ref: '#/components/schemas/Person' } },
+            pagination: {
+              type: 'object',
+              properties: {
+                page: { type: 'integer' },
+                limit: { type: 'integer' },
+                total: { type: 'integer' },
+                totalPages: { type: 'integer' },
+                hasNext: { type: 'boolean' },
+                hasPrevious: { type: 'boolean' },
+              },
+            },
+            timestamp: { type: 'string', format: 'date-time' },
+          },
+        },
+      },
+    },
+    handler: personController.getAll.bind(personController),
+  });
+
+  // ==========================================
+  // GET /people/:id - Get person by ID
+  // ==========================================
+  fastify.get('/people/:id', {
+    schema: {
+      tags: ['People'],
+      summary: 'Get person by ID',
+      description: 'Get detailed information about a person including manager and direct reports',
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: { type: 'string', description: 'Person ID' },
+        },
+      },
+      response: {
+        200: {
+          description: 'Successful response',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            data: { $ref: '#/components/schemas/PersonWithRelations' },
+            timestamp: { type: 'string', format: 'date-time' },
+          },
+        },
+        404: { $ref: '#/components/schemas/ApiError' },
+      },
+    },
+    handler: personController.getById.bind(personController),
+  });
+
+  // ==========================================
+  // GET /people/:id/management-chain - Get management chain
+  // ==========================================
+  fastify.get('/people/:id/management-chain', {
+    schema: {
+      tags: ['People'],
+      summary: 'Get management chain',
+      description: 'Get the management chain (path to CEO) for a person',
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: { type: 'string', description: 'Person ID' },
+        },
+      },
+      response: {
+        200: {
+          description: 'Successful response',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            data: { type: 'array', items: { $ref: '#/components/schemas/Person' } },
+            timestamp: { type: 'string', format: 'date-time' },
+          },
+        },
+        404: { $ref: '#/components/schemas/ApiError' },
+      },
+    },
+    handler: personController.getManagementChain.bind(personController),
+  });
+
+  // ==========================================
+  // POST /people - Create person
+  // ==========================================
+  fastify.post('/people', {
+    schema: {
+      tags: ['People'],
+      summary: 'Create a new person',
+      description: 'Create a new person in the organization',
+      body: { $ref: '#/components/schemas/CreatePersonRequest' },
+      response: {
+        201: {
+          description: 'Person created successfully',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            data: { $ref: '#/components/schemas/Person' },
+            timestamp: { type: 'string', format: 'date-time' },
+          },
+        },
+        400: { $ref: '#/components/schemas/ApiError' },
+        404: { $ref: '#/components/schemas/ApiError' },
+      },
+    },
+    handler: personController.create.bind(personController),
+  });
+
+  // ==========================================
+  // PUT /people/:id - Update person
+  // ==========================================
+  fastify.put('/people/:id', {
+    schema: {
+      tags: ['People'],
+      summary: 'Update a person',
+      description: 'Update an existing person in the organization',
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: { type: 'string', description: 'Person ID' },
+        },
+      },
+      body: { $ref: '#/components/schemas/UpdatePersonRequest' },
+      response: {
+        200: {
+          description: 'Person updated successfully',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            data: { $ref: '#/components/schemas/Person' },
+            timestamp: { type: 'string', format: 'date-time' },
+          },
+        },
+        400: { $ref: '#/components/schemas/ApiError' },
+        404: { $ref: '#/components/schemas/ApiError' },
+      },
+    },
+    handler: personController.update.bind(personController),
+  });
+
+  // ==========================================
+  // DELETE /people/:id - Delete person
+  // ==========================================
+  fastify.delete('/people/:id', {
+    schema: {
+      tags: ['People'],
+      summary: 'Delete a person',
+      description:
+        'Delete a person from the organization. Direct reports will have their manager set to null.',
+      params: {
+        type: 'object',
+        required: ['id'],
+        properties: {
+          id: { type: 'string', description: 'Person ID' },
+        },
+      },
+      response: {
+        204: {
+          description: 'Person deleted successfully',
+          type: 'null',
+        },
+        404: { $ref: '#/components/schemas/ApiError' },
+      },
+    },
+    handler: personController.delete.bind(personController),
+  });
+
+  // ==========================================
+  // GET /hierarchy - Get organizational hierarchy
+  // ==========================================
+  fastify.get('/hierarchy', {
+    schema: {
+      tags: ['Hierarchy'],
+      summary: 'Get organizational hierarchy',
+      description: 'Get the full organizational hierarchy as a tree structure',
+      querystring: {
+        type: 'object',
+        properties: {
+          rootId: { type: 'string', description: 'Start from specific person ID (optional)' },
+        },
+      },
+      response: {
+        200: {
+          description: 'Successful response',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            data: { $ref: '#/components/schemas/HierarchyNode' },
+            timestamp: { type: 'string', format: 'date-time' },
+          },
+        },
+        404: { $ref: '#/components/schemas/ApiError' },
+      },
+    },
+    handler: personController.getHierarchy.bind(personController),
+  });
+
+  // ==========================================
+  // GET /departments - Get all departments
+  // ==========================================
+  fastify.get('/departments', {
+    schema: {
+      tags: ['People'],
+      summary: 'Get all departments',
+      description: 'Get a list of all unique departments in the organization',
+      response: {
+        200: {
+          description: 'Successful response',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            data: { type: 'array', items: { type: 'string' } },
+            timestamp: { type: 'string', format: 'date-time' },
+          },
+        },
+      },
+    },
+    handler: personController.getDepartments.bind(personController),
+  });
+
+  // ==========================================
+  // GET /managers - Get all managers
+  // ==========================================
+  fastify.get('/managers', {
+    schema: {
+      tags: ['People'],
+      summary: 'Get all managers',
+      description: 'Get a list of all people who have direct reports',
+      response: {
+        200: {
+          description: 'Successful response',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            data: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  id: { type: 'integer' },
+                  name: { type: 'string' },
+                  jobTitle: { type: 'string' },
+                  department: { type: 'string' },
+                  photoPath: { type: 'string', nullable: true },
+                },
+              },
+            },
+            timestamp: { type: 'string', format: 'date-time' },
+          },
+        },
+      },
+    },
+    handler: personController.getManagers.bind(personController),
+  });
+
+  // ==========================================
+  // GET /statistics - Get organizational statistics
+  // ==========================================
+  fastify.get('/statistics', {
+    schema: {
+      tags: ['People'],
+      summary: 'Get organizational statistics',
+      description:
+        'Get statistics about the organization (total people, by type, by status, by department)',
+      response: {
+        200: {
+          description: 'Successful response',
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            data: {
+              type: 'object',
+              properties: {
+                totalPeople: { type: 'integer' },
+                totalEmployees: { type: 'integer' },
+                totalPartners: { type: 'integer' },
+                totalActive: { type: 'integer' },
+                totalInactive: { type: 'integer' },
+                departments: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      name: { type: 'string' },
+                      count: { type: 'integer' },
+                    },
+                  },
+                },
+              },
+            },
+            timestamp: { type: 'string', format: 'date-time' },
+          },
+        },
+      },
+    },
+    handler: personController.getStatistics.bind(personController),
+  });
+};
