@@ -9,10 +9,20 @@ A full-stack web application that displays an organizational chart from a list o
 
 ## 🔗 Links
 
-- **Deployed Application:** [https://jnj-orgchart.vercel.app](https://jnj-orgchart.vercel.app) *(Frontend - Deploy pending)*
+### Production
+- **Frontend Application:** [https://jnj-orgchart-hkdlt9411-renatormsilvas-projects.vercel.app](https://jnj-orgchart-hkdlt9411-renatormsilvas-projects.vercel.app)
+- **Backend API:** [https://jnj-orgchart-production.up.railway.app/api/v1](https://jnj-orgchart-production.up.railway.app/api/v1)
 - **API Documentation (Swagger):** [https://jnj-orgchart-production.up.railway.app/docs](https://jnj-orgchart-production.up.railway.app/docs)
 - **API Health Check:** [https://jnj-orgchart-production.up.railway.app/health](https://jnj-orgchart-production.up.railway.app/health)
-- **Source Code:** [GitHub Repository](https://github.com/renatormsilva/jnj-orgchart)
+
+### Development
+- **Frontend:** http://localhost:5173
+- **Backend API:** http://localhost:3000/api/v1
+- **Swagger Docs:** http://localhost:3000/docs
+- **Health Check:** http://localhost:3000/health
+
+### Source Code
+- **GitHub Repository:** [https://github.com/renatormsilva/jnj-orgchart](https://github.com/renatormsilva/jnj-orgchart)
 
 ---
 
@@ -225,14 +235,17 @@ frontend/src/
 
 ### Core Features (Required)
 
-- ✅ **List/Table View** - Paginated, sortable table with all people
-- ✅ **Hierarchy View** - Interactive organizational tree with zoom/pan
-- ✅ **Person Details** - Name, job title, department, manager, direct reports, photo, type, status
-- ✅ **Search** - Real-time search across names
-- ✅ **Filters** - Department, Manager, Type (Employee/Partner), Status (Active/Inactive)
-- ✅ **CEO Highlight** - Crown icon for top of hierarchy
-- ✅ **J&J Brand Colors** - Primary Red (#EB1700), White, Grays, Black text
-- ✅ **J&J Brand Typography** - Arial as default font per brand guidelines (Johnson Display/Text would be used in production via J&J Brand Center)
+| Feature | Status | Code Location |
+|---------|--------|---------------|
+| **List/Table View** | ✅ | `frontend/src/pages/PeoplePage.tsx`, `frontend/src/components/people/PeopleList.tsx` |
+| **Hierarchy View** | ✅ | `frontend/src/pages/HierarchyPage.tsx`, `frontend/src/components/hierarchy/` |
+| **Person Details** | ✅ | `frontend/src/components/people/PersonDetails.tsx`, `frontend/src/components/people/PersonModal.tsx` |
+| **Search** | ✅ | `frontend/src/components/people/PersonFilters.tsx`, `frontend/src/store/filtersStore.ts` |
+| **Filters** | ✅ | `frontend/src/components/people/PersonFilters.tsx`, `backend/src/presentation/routes/personRoutes.ts` |
+| **CEO Highlight** | ✅ | `frontend/src/components/hierarchy/HierarchyNode.tsx` (Crown icon) |
+| **J&J Brand Colors** | ✅ | `frontend/tailwind.config.js`, `frontend/src/index.css` |
+| **J&J Brand Typography** | ✅ | `frontend/tailwind.config.js` (Arial as fallback per brand guidelines) |
+| **Data via HTTP API** | ✅ | `frontend/src/api/client.ts`, `frontend/src/api/peopleApi.ts` |
 
 ### API Endpoints
 
@@ -258,81 +271,92 @@ frontend/src/
 ## 🌟 Plus Features Implemented
 
 ### 1. ✅ Database Management
-- PostgreSQL with Prisma ORM
-- Schema migrations and versioning
-- Seed data with 100 people from `org-chart-people-100.json`
-- Indexes for performance optimization
+| Aspect | Implementation | Code Location |
+|--------|----------------|---------------|
+| PostgreSQL + Prisma ORM | Type-safe database access | `backend/src/infrastructure/database/prisma.ts` |
+| Schema & Migrations | Versioned database schema | `backend/prisma/schema.prisma`, `backend/prisma/migrations/` |
+| Seed Data | 100 people from JSON | `backend/prisma/seed.ts`, `backend/org-chart-people-100.json` |
+| Query Optimization | Database indexes | `backend/prisma/schema.prisma` (@@index annotations) |
 
 ### 2. ✅ Logging Management
-- Pino structured JSON logging
-- Log levels: debug, info, warn, error
-- Request/response logging with duration
-- Request ID tracking
+| Aspect | Implementation | Code Location |
+|--------|----------------|---------------|
+| Structured JSON Logging | Pino logger | `backend/src/config/logger.ts` |
+| Request/Response Logging | HTTP method, path, status, duration | `backend/src/presentation/middlewares/requestLogger.ts` |
+| Request ID Tracking | UUID per request | `backend/src/server.ts` (genReqId) |
 
 ### 3. ✅ API Documentation
-- Swagger/OpenAPI 3.0 specification
-- Interactive documentation at `/docs`
-- Try-it-out functionality
+| Aspect | Implementation | Code Location |
+|--------|----------------|---------------|
+| OpenAPI 3.0 Spec | Full API documentation | `backend/src/server.ts` (swagger config) |
+| Interactive Swagger UI | Try-it-out functionality | Production: `/docs` |
 
 ### 4. ✅ Health Check Endpoints
-- `GET /health` - Basic status
-- `GET /health/ready` - Database connection check
-- `GET /health/live` - Kubernetes liveness probe 
+| Endpoint | Purpose | Code Location |
+|----------|---------|---------------|
+| `GET /health` | Basic status + DB check | `backend/src/presentation/routes/healthRoutes.ts` |
+| `GET /health/detailed` | Detailed system info | `backend/src/presentation/routes/healthRoutes.ts` |
 
 ### 5. ✅ API Best Practices
-- Request validation with Zod
-- Proper HTTP status codes (200, 201, 400, 404, 500)
-- Structured error responses with request ID
-- Pagination with hasNext/hasPrevious
+| Aspect | Implementation | Code Location |
+|--------|----------------|---------------|
+| Request Validation | Zod schemas | `backend/src/presentation/controllers/personController.ts` |
+| Error Handling | Structured responses with requestId | `backend/src/presentation/middlewares/errorHandler.ts` |
+| Pagination | hasNext/hasPrevious, total count | `backend/src/application/services/PersonService.ts` |
 
 ### 6. ✅ Security & Performance
-- Input validation and sanitization
-- SQL injection prevention (Prisma)
-- XSS protection (Helmet)
-- CORS configuration
-- Environment variables for sensitive data
+| Aspect | Implementation | Code Location |
+|--------|----------------|---------------|
+| Input Validation | Zod + Prisma parameterized queries | `backend/src/presentation/controllers/` |
+| XSS Protection | Helmet middleware | `backend/src/server.ts` |
+| CORS | Configurable origins | `backend/src/server.ts` |
+| Environment Variables | dotenv + Zod validation | `backend/src/config/env.ts` |
 
 ### 7. ✅ Docker Containerization
-- Multi-stage Dockerfile for backend
-- Docker Compose for local development
-- Production-optimized builds
+| Aspect | Implementation | Code Location |
+|--------|----------------|---------------|
+| Multi-stage Build | Optimized production image | `backend/Dockerfile` |
+| Docker Compose | Local development setup | `backend/docker-compose.dev.yml` |
 
 ### 8. ✅ Code Quality Tools
-- ESLint + Prettier for consistent code
-- TypeScript strict mode
-- Husky pre-commit hooks (optional)
+| Aspect | Implementation | Code Location |
+|--------|----------------|---------------|
+| Linting | ESLint + Prettier | `backend/.eslintrc.js`, `frontend/eslint.config.js` |
+| Type Safety | TypeScript strict mode | `backend/tsconfig.json`, `frontend/tsconfig.json` |
 
 ### 9. ✅ Analytics Integration
-- Google Analytics 4 integration
-- Page view tracking
-- Custom event tracking (person selected, filters applied, zoom actions)
+| Aspect | Implementation | Code Location |
+|--------|----------------|---------------|
+| Google Analytics 4 | gtag.js integration | `frontend/index.html` |
+| Page View Tracking | Automatic | `frontend/index.html` (gtag config) |
 
 ### 10. ✅ Authentication
-- API Key authentication for write operations
-- X-API-Key header validation
-- Configurable via environment variables
+| Aspect | Implementation | Code Location |
+|--------|----------------|---------------|
+| API Key Auth | X-API-Key header validation | `backend/src/presentation/middlewares/authMiddleware.ts` |
+| Route Protection | Write operations protected | `backend/src/presentation/routes/personRoutes.ts` |
 
 ### 11. ✅ Event Management
-- Event-driven architecture for tracking system events
-- Events logged: `person.created`, `person.updated`, `person.deleted`, `person.manager_changed`, `person.status_changed`
-- Full event history stored in database (EventLog table)
-- API endpoints to query events:
-  - `GET /api/v1/events` - List all events (paginated, filterable)
-  - `GET /api/v1/events/:id` - Get event by ID
-  - `GET /api/v1/events/aggregate/:type/:id` - Get events for specific entity
-  - `GET /api/v1/events/statistics` - Event statistics
-- Pub/sub pattern for real-time event notifications
+| Aspect | Implementation | Code Location |
+|--------|----------------|---------------|
+| Event Service | Pub/sub pattern | `backend/src/application/services/EventService.ts` |
+| Event Types | person.created, updated, deleted, etc. | `backend/src/domain/events/` |
+| Event Storage | EventLog table | `backend/prisma/schema.prisma` (EventLog model) |
+| Event API | CRUD + statistics | `backend/src/presentation/routes/eventRoutes.ts` |
 
 ### 12. ✅ Automated Tests
-- **Unit Tests:** 138 tests (72 backend + 66 frontend)
-- **E2E Tests:** Playwright tests for UI flows and API
+| Type | Count | Code Location |
+|------|-------|---------------|
+| Backend Unit | 72 tests | `backend/src/**/*.test.ts` |
+| Frontend Unit | 66 tests | `frontend/src/**/*.test.ts`, `frontend/src/**/*.test.tsx` |
+| E2E | 12 tests | `e2e/*.spec.ts` |
 
 ### 13. ✅ CI/CD Pipeline
-- **GitHub Actions** workflow for automated testing
-- Runs on every push and pull request
-- Jobs: Lint, Build, Unit Tests, E2E Tests
-- Parallel execution for faster feedback
-- PostgreSQL service container for E2E tests
+| Aspect | Implementation | Code Location |
+|--------|----------------|---------------|
+| GitHub Actions | Automated CI/CD | `.github/workflows/ci.yml` |
+| Jobs | Lint, Build, Test (Backend/Frontend/E2E) | `.github/workflows/ci.yml` |
+| PostgreSQL Service | Container for E2E tests | `.github/workflows/ci.yml` (services section) |
 
 ---
 
@@ -341,8 +365,8 @@ frontend/src/
 ### Swagger UI
 
 Access the interactive API documentation at:
-- Local: http://localhost:3000/docs
-- Production: https://your-api-url/docs
+- **Production:** [https://jnj-orgchart-production.up.railway.app/docs](https://jnj-orgchart-production.up.railway.app/docs)
+- **Local:** http://localhost:3000/docs
 
 ### Example Requests
 
@@ -400,11 +424,13 @@ npm run test:e2e:ui
 
 ### Test Coverage
 
-| Layer | Tests | Coverage |
-|-------|-------|----------|
-| Backend Unit | 72 | Services (PersonService, EventService), Helpers, Errors |
-| Frontend Unit | 66 | Hooks, Store, Utils, Components |
-| E2E | 32 | Home, People List, Hierarchy, API |
+| Layer | Tests | Coverage Areas |
+|-------|-------|----------------|
+| Backend Unit | 72 | PersonService, EventService, Helpers, Error handling |
+| Frontend Unit | 66 | Hooks (usePeople, useFilters), Store (Zustand), Utils, Components |
+| E2E | 12 | Home page, People List, Hierarchy View, Person Details, API Integration |
+
+**Total: 150 automated tests**
 
 ---
 
@@ -499,24 +525,30 @@ UI copy follows J&J brand voice attributes:
 ## ⚠️ Known Limitations
 
 1. **No Real-Time Updates**
-   - Changes require page refresh
-   - Future: WebSocket integration for live updates
+   - Changes require page refresh to see updates
+   - *Future improvement: WebSocket integration for live updates*
 
 2. **Basic Authentication**
-   - API key authentication only
-   - Future: JWT with user roles and permissions
+   - API key authentication only (no user sessions)
+   - *Future improvement: JWT with user roles and permissions*
 
 3. **No Rate Limiting**
-   - API is unprotected against abuse
-   - Future: Implement rate limiting middleware
+   - API is unprotected against high-volume abuse
+   - *Future improvement: Redis-based rate limiting middleware*
 
-4. **Limited Mobile Optimization**
-   - Hierarchy view challenging on small screens
-   - Future: Responsive hierarchy with collapsible branches
+4. **Hierarchy View on Mobile**
+   - Tree visualization works but is challenging on small screens
+   - Zoom/pan controls help but touch gestures could be improved
+   - *Future improvement: Responsive hierarchy with collapsible branches*
 
-5. **No Offline Support**
-   - Requires internet connection
-   - Future: Service Worker for offline capability
+5. **Database Connection Pooling**
+   - Supabase pooler may have occasional connection delays
+   - Mitigated with retry logic and connection parameters
+   - *Future improvement: Dedicated database instance for production*
+
+6. **No Drag & Drop Reorganization**
+   - Cannot visually reorganize hierarchy by dragging
+   - *Future improvement: Implement drag & drop for manager reassignment*
 
 ---
 
