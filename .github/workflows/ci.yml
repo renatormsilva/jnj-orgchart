@@ -66,6 +66,14 @@ jobs:
     defaults:
       run:
         working-directory: backend
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test?schema=public
+      NODE_ENV: test
+      PORT: 3000
+      HOST: 0.0.0.0
+      CORS_ORIGIN: http://localhost:5173
+      API_PREFIX: /api/v1
+      LOG_LEVEL: error
     steps:
       - uses: actions/checkout@v4
 
