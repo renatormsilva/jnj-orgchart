@@ -9,8 +9,9 @@ A full-stack web application that displays an organizational chart from a list o
 
 ## 🔗 Links
 
-- **Deployed Application:** [https://jj-orgchart.vercel.app](https://jj-orgchart.vercel.app) *(Update with actual URL)*
-- **API Documentation (Swagger):** [https://jj-orgchart-api.railway.app/docs](https://jj-orgchart-api.railway.app/docs) *(Update with actual URL)*
+- **Deployed Application:** [https://jnj-orgchart.vercel.app](https://jnj-orgchart.vercel.app) *(Frontend - Deploy pending)*
+- **API Documentation (Swagger):** [https://jnj-orgchart-production.up.railway.app/docs](https://jnj-orgchart-production.up.railway.app/docs)
+- **API Health Check:** [https://jnj-orgchart-production.up.railway.app/health](https://jnj-orgchart-production.up.railway.app/health)
 - **Source Code:** [GitHub Repository](https://github.com/renatormsilva/jnj-orgchart)
 
 ---

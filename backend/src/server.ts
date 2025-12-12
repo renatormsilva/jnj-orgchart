@@ -66,12 +66,12 @@ No rate limiting is currently enforced.
       },
       servers: [
         {
-          url: `http://localhost:${env.PORT}`,
-          description: 'Development server',
+          url: 'https://jnj-orgchart-production.up.railway.app',
+          description: 'Production server (Railway)',
         },
         {
-          url: 'https://api.jj-orgchart.com',
-          description: 'Production server',
+          url: `http://localhost:${env.PORT}`,
+          description: 'Development server',
         },
       ],
       tags: [
