@@ -1,0 +1,101 @@
+/*
+ * J&J Brand Typography Setup
+ * =========================
+ * Per J&J Brand Guidelines, the official fonts are:
+ * - Johnson Display (display/headlines)
+ * - Johnson Text (body text)
+ * - Arial (default font)
+ *
+ * Current implementation uses Arial as the default font per brand guidelines.
+ * In production, official Johnson Display and Johnson Text fonts would be
+ * obtained from J&J Brand Center and loaded via @font-face declarations below.
+ *
+ * To use official J&J fonts in production:
+ * 1. Obtain Johnson Display and Johnson Text font files from J&J Brand Center
+ * 2. Place font files in /public/fonts/
+ * 3. Uncomment the @font-face declarations below
+ */
+
+/*
+@font-face {
+  font-family: 'Johnson Display';
+  src: url('/fonts/JohnsonDisplay-Regular.woff2') format('woff2'),
+       url('/fonts/JohnsonDisplay-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Johnson Display';
+  src: url('/fonts/JohnsonDisplay-Bold.woff2') format('woff2'),
+       url('/fonts/JohnsonDisplay-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Johnson Text';
+  src: url('/fonts/JohnsonText-Regular.woff2') format('woff2'),
+       url('/fonts/JohnsonText-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Johnson Text';
+  src: url('/fonts/JohnsonText-Medium.woff2') format('woff2'),
+       url('/fonts/JohnsonText-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+*/
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Skeleton Loading Animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite linear;
+}
+
+@layer base {
+  * {
+    @apply border-jnj-gray-400;
+  }
+
+  body {
+    @apply bg-white text-jnj-gray-900 font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-jnj-red text-white px-4 py-2 rounded hover:bg-red-700 transition-colors font-medium;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-jnj-gray-900 border border-jnj-gray-400 px-4 py-2 rounded hover:bg-jnj-gray-100 transition-colors font-medium;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-md border border-jnj-gray-400 p-4;
+  }
+}
