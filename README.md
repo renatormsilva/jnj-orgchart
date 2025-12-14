@@ -15,12 +15,6 @@ A full-stack web application that displays an organizational chart from a list o
 - **API Documentation (Swagger):** [https://jnj-orgchart-production.up.railway.app/docs](https://jnj-orgchart-production.up.railway.app/docs)
 - **API Health Check:** [https://jnj-orgchart-production.up.railway.app/health](https://jnj-orgchart-production.up.railway.app/health)
 
-### Development
-- **Frontend:** http://localhost:5173
-- **Backend API:** http://localhost:3000/api/v1
-- **Swagger Docs:** http://localhost:3000/docs
-- **Health Check:** http://localhost:3000/health
-
 ### Source Code
 - **GitHub Repository:** [https://github.com/renatormsilva/jnj-orgchart](https://github.com/renatormsilva/jnj-orgchart)
 
