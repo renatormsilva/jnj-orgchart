@@ -59,6 +59,7 @@ const createMockRepository = (): jest.Mocked<IPersonRepository> => ({
   findRootPerson: jest.fn(),
   getHierarchyTree: jest.fn(),
   getDepartments: jest.fn(),
+  getDepartmentsWithCount: jest.fn(),
   getManagers: jest.fn(),
   create: jest.fn(),
   update: jest.fn(),
@@ -223,9 +224,10 @@ describe('PersonService', () => {
       mockRepository.count.mockResolvedValueOnce(20);
       mockRepository.count.mockResolvedValueOnce(90);
       mockRepository.count.mockResolvedValueOnce(10);
-      mockRepository.getDepartments.mockResolvedValue(['Engineering', 'Sales']);
-      mockRepository.count.mockResolvedValueOnce(50);
-      mockRepository.count.mockResolvedValueOnce(50);
+      mockRepository.getDepartmentsWithCount.mockResolvedValue([
+        { name: 'Engineering', count: 50 },
+        { name: 'Sales', count: 50 },
+      ]);
 
       const result = await service.getStatistics();
 
@@ -235,6 +237,7 @@ describe('PersonService', () => {
       expect(result.totalActive).toBe(90);
       expect(result.totalInactive).toBe(10);
       expect(result.departments).toHaveLength(2);
+      expect(result.departments[0]).toEqual({ name: 'Engineering', count: 50 });
     });
   });
 

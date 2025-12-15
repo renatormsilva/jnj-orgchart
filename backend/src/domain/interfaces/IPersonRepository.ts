@@ -23,6 +23,11 @@ export interface FindAllOptions {
   sort?: SortParams<PersonSortField>;
 }
 
+export interface DepartmentCount {
+  name: string;
+  count: number;
+}
+
 export interface IPersonRepository {
   findAll(options?: FindAllOptions): Promise<PaginatedResponse<PersonProps>>;
   findById(id: number): Promise<PersonProps | null>;
@@ -32,6 +37,7 @@ export interface IPersonRepository {
   findRootPerson(): Promise<PersonProps | null>;
   getHierarchyTree(rootId?: number): Promise<HierarchyNode>;
   getDepartments(): Promise<string[]>;
+  getDepartmentsWithCount(): Promise<DepartmentCount[]>;
   getManagers(): Promise<(PersonProps & { directReportsCount: number })[]>;
   create(data: CreatePersonProps): Promise<PersonProps>;
   update(id: number, data: UpdatePersonProps): Promise<PersonProps>;

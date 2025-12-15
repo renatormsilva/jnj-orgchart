@@ -139,16 +139,8 @@ export class PersonService {
         this.repository.count({ type: PersonType.Partner }),
         this.repository.count({ status: PersonStatus.Active }),
         this.repository.count({ status: PersonStatus.Inactive }),
-        this.repository.getDepartments(),
+        this.repository.getDepartmentsWithCount(),
       ]);
-
-    // Get count per department
-    const departmentCounts = await Promise.all(
-      departments.map(async dept => ({
-        name: dept,
-        count: await this.repository.count({ department: dept }),
-      }))
-    );
 
     return {
       totalPeople,
@@ -156,7 +148,7 @@ export class PersonService {
       totalPartners,
       totalActive,
       totalInactive,
-      departments: departmentCounts,
+      departments,
     };
   }
 

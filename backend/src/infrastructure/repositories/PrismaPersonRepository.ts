@@ -257,6 +257,24 @@ export class PrismaPersonRepository implements IPersonRepository {
     }
   }
 
+  async getDepartmentsWithCount(): Promise<{ name: string; count: number }[]> {
+    try {
+      const departments = await prisma.person.groupBy({
+        by: ['department'],
+        _count: { department: true },
+        orderBy: { department: 'asc' },
+      });
+
+      return departments.map(d => ({
+        name: d.department,
+        count: d._count.department,
+      }));
+    } catch (error) {
+      logger.error({ error }, 'Failed to fetch departments with count');
+      throw new DatabaseError('Failed to fetch departments with count');
+    }
+  }
+
   async getManagers(): Promise<(PersonProps & { directReportsCount: number })[]> {
     try {
       const managers = await prisma.person.findMany({
