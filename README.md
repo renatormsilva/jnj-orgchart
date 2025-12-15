@@ -241,27 +241,6 @@ frontend/src/
 | **J&J Brand Typography** | ✅ | `frontend/tailwind.config.js` (Arial as fallback per brand guidelines) |
 | **Data via HTTP API** | ✅ | `frontend/src/api/client.ts`, `frontend/src/api/peopleApi.ts` |
 
-### API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/v1/people` | List all people (paginated, filterable) |
-| GET | `/api/v1/people/:id` | Get person with manager & direct reports |
-| GET | `/api/v1/people/:id/management-chain` | Get path to CEO |
-| POST | `/api/v1/people` | Create person (requires API key) |
-| PUT | `/api/v1/people/:id` | Update person (requires API key) |
-| DELETE | `/api/v1/people/:id` | Delete person (requires API key) |
-| GET | `/api/v1/hierarchy` | Get organizational tree |
-| GET | `/api/v1/departments` | List all departments |
-| GET | `/api/v1/managers` | List all managers |
-| GET | `/api/v1/statistics` | Organization statistics |
-| GET | `/api/v1/events` | List all events (requires API key) |
-| GET | `/api/v1/events/:id` | Get event by ID (requires API key) |
-| GET | `/api/v1/events/statistics` | Event statistics (requires API key) |
-| GET | `/api/v1/events/aggregate/:type/:id` | Events for entity (requires API key) |
-
----
-
 ## 🌟 Plus Features Implemented
 
 ### 1. ✅ Database Management
@@ -351,6 +330,25 @@ frontend/src/
 | GitHub Actions | Automated CI/CD | `.github/workflows/ci.yml` |
 | Jobs | Lint, Build, Test (Backend/Frontend/E2E) | `.github/workflows/ci.yml` |
 | PostgreSQL Service | Container for E2E tests | `.github/workflows/ci.yml` (services section) |
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/people` | List all people (paginated, filterable) |
+| GET | `/api/v1/people/:id` | Get person with manager & direct reports |
+| GET | `/api/v1/people/:id/management-chain` | Get path to CEO |
+| POST | `/api/v1/people` | Create person (requires API key) |
+| PUT | `/api/v1/people/:id` | Update person (requires API key) |
+| DELETE | `/api/v1/people/:id` | Delete person (requires API key) |
+| GET | `/api/v1/hierarchy` | Get organizational tree |
+| GET | `/api/v1/departments` | List all departments |
+| GET | `/api/v1/managers` | List all managers |
+| GET | `/api/v1/statistics` | Organization statistics |
+| GET | `/api/v1/events` | List all events (requires API key) |
+| GET | `/api/v1/events/:id` | Get event by ID (requires API key) |
+| GET | `/api/v1/events/statistics` | Event statistics (requires API key) |
+| GET | `/api/v1/events/aggregate/:type/:id` | Events for entity (requires API key) |
 
 ---
 
