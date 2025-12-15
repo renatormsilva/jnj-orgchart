@@ -48,7 +48,6 @@ export const PersonFilters: React.FC = () => {
       </div>
 
       <div className="space-y-4">
-        {/* Search */}
         <div className="relative">
           <label htmlFor="search-input" className="sr-only">
             Search people
@@ -65,7 +64,6 @@ export const PersonFilters: React.FC = () => {
           />
         </div>
 
-        {/* Department */}
         <div>
           <label htmlFor="department-filter" className="block text-sm font-medium text-jnj-gray-900 mb-1">
             Department
@@ -91,7 +89,6 @@ export const PersonFilters: React.FC = () => {
           </select>
         </div>
 
-        {/* Manager */}
         <div>
           <label htmlFor="manager-filter" className="block text-sm font-medium text-jnj-gray-900 mb-1">
             Manager
@@ -117,7 +114,6 @@ export const PersonFilters: React.FC = () => {
           </select>
         </div>
 
-        {/* Type */}
         <fieldset>
           <legend className="block text-sm font-medium text-jnj-gray-900 mb-2">
             Type
@@ -159,7 +155,6 @@ export const PersonFilters: React.FC = () => {
           </div>
         </fieldset>
 
-        {/* Status */}
         <fieldset>
           <legend className="block text-sm font-medium text-jnj-gray-900 mb-2">
             Status

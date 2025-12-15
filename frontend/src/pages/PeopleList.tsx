@@ -37,12 +37,10 @@ export const PeopleList: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Filters Sidebar */}
         <div className="lg:col-span-1">
           <PersonFilters />
         </div>
 
-        {/* Main Content */}
         <div className="lg:col-span-3 space-y-6">
           {isLoading ? (
             <TableSkeleton rows={10} />
@@ -53,7 +51,6 @@ export const PeopleList: React.FC = () => {
                 onPersonClick={(person) => setSelectedPersonId(person.id)}
               />
 
-              {/* Pagination */}
               <div className="bg-white rounded-lg shadow p-4">
                 <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
                   <div className="flex items-center space-x-2">
@@ -104,7 +101,6 @@ export const PeopleList: React.FC = () => {
         </div>
       </div>
 
-      {/* Person Details Modal */}
       {selectedPersonId && (
         <PersonDetails
           personId={selectedPersonId}

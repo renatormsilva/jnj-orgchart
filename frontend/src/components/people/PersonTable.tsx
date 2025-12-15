@@ -43,7 +43,6 @@ export const PersonTable: React.FC<PersonTableProps> = ({ people, onPersonClick 
 
   return (
     <div className="overflow-x-auto bg-white rounded-lg shadow">
-      {/* Mobile scroll hint */}
       <div className="sm:hidden bg-jnj-gray-100 px-4 py-2 text-xs text-jnj-gray-700 text-center border-b border-jnj-gray-400">
         Swipe left to see more →
       </div>

@@ -14,14 +14,12 @@ export const HierarchyBreadcrumb: React.FC<HierarchyBreadcrumbProps> = ({ path, 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
       <div className="flex items-center gap-2 overflow-x-auto">
-        {/* Home Icon */}
         <div className="flex-shrink-0">
           <div className="p-2 bg-gray-50 rounded-lg">
             <Home className="w-4 h-4 text-gray-600" />
           </div>
         </div>
 
-        {/* Breadcrumb Trail - Minimalist */}
         {path.map((node, index) => {
           const isLast = index === path.length - 1;
 

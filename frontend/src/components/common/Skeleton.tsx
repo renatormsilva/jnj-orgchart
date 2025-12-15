@@ -120,7 +120,6 @@ export const CardSkeleton: React.FC = () => {
 export const HierarchyNodeSkeleton: React.FC = () => {
   return (
     <div className="flex flex-col items-center space-y-8">
-      {/* Main CEO Card Skeleton - Minimalist */}
       <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4 min-w-[280px]">
         <div className="flex items-start gap-3">
           <Skeleton variant="circular" width={64} height={64} />
@@ -132,7 +131,6 @@ export const HierarchyNodeSkeleton: React.FC = () => {
         </div>
       </div>
 
-      {/* Child Nodes Skeleton */}
       <div className="flex space-x-12">
         {Array.from({ length: 3 }).map((_, index) => (
           <div key={index} className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 w-[220px]">

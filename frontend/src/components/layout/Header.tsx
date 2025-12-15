@@ -12,7 +12,6 @@ export const Header: React.FC = () => {
     <header className="bg-white border-b-4 border-jnj-red shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
           <div className="flex items-center flex-shrink-0">
             <Link to={ROUTES.HOME} className="flex items-center">
               <div className="text-jnj-red font-display text-xl sm:text-2xl font-bold">
@@ -24,7 +23,6 @@ export const Header: React.FC = () => {
             </Link>
           </div>
 
-          {/* Navigation */}
           <nav className="flex space-x-2 sm:space-x-4">
             <Link
               to={ROUTES.PEOPLE}

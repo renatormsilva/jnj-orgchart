@@ -43,7 +43,6 @@ export const AnimatedList: React.FC<AnimatedListProps> = ({
   );
 };
 
-// Fade in animation component
 interface FadeInProps {
   children: React.ReactNode;
   delay?: number;
@@ -63,7 +62,6 @@ export const FadeIn: React.FC<FadeInProps> = ({ children, delay = 0, className =
   );
 };
 
-// Scale in animation for buttons and interactive elements
 interface ScaleInProps {
   children: React.ReactNode;
   className?: string;

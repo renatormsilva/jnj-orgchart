@@ -13,9 +13,10 @@ interface PersonDetailsProps {
   personId: string;
   onClose: () => void;
   onPersonChange?: (newPersonId: string) => void;
+  onViewInHierarchy?: (personId: string) => void;
 }
 
-export const PersonDetails: React.FC<PersonDetailsProps> = ({ personId, onClose, onPersonChange }) => {
+export const PersonDetails: React.FC<PersonDetailsProps> = ({ personId, onClose, onPersonChange, onViewInHierarchy }) => {
   const navigate = useNavigate();
   const { data: personData, isLoading, error } = usePerson(personId);
   const { data: managementChain } = useManagementChain(personId);
@@ -69,7 +70,6 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({ personId, onClose,
         onClick={(e) => e.stopPropagation()}
         className="bg-white rounded-lg max-w-4xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto"
       >
-        {/* Header */}
         <div className="sticky top-0 bg-white border-b border-jnj-gray-400 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between z-10">
           <h2 className="text-xl sm:text-2xl font-display font-bold text-jnj-gray-900">
             Meet Our Team Member
@@ -83,9 +83,7 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({ personId, onClose,
           </button>
         </div>
 
-        {/* Content */}
         <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-          {/* Profile Section */}
           <div className="flex flex-col sm:flex-row items-start sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
             <img
               src={getPersonPhotoUrl(personData.photoPath, personData.id, personData.name)}
@@ -108,7 +106,6 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({ personId, onClose,
             </div>
           </div>
 
-          {/* Info Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex items-start space-x-3">
               <Users className="w-5 h-5 text-jnj-gray-700 mt-0.5" />
@@ -171,7 +168,6 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({ personId, onClose,
             )}
           </div>
 
-          {/* Manager Section */}
           {personData.manager && (
             <div className="border-t border-jnj-gray-400 pt-6">
               <h4 className="font-display font-semibold text-jnj-gray-900 mb-3">
@@ -205,7 +201,6 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({ personId, onClose,
             </div>
           )}
 
-          {/* Direct Reports Section */}
           {personData.directReports && personData.directReports.length > 0 && (
             <div className="border-t border-jnj-gray-400 pt-6">
               <h4 className="font-display font-semibold text-jnj-gray-900 mb-3">
@@ -242,7 +237,6 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({ personId, onClose,
             </div>
           )}
 
-          {/* Management Chain */}
           {managementChain && managementChain.length > 0 && (
             <div className="border-t border-jnj-gray-400 pt-6">
               <h4 className="font-display font-semibold text-jnj-gray-900 mb-3">
@@ -266,13 +260,16 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({ personId, onClose,
             </div>
           )}
 
-          {/* Actions */}
           <div className="border-t border-jnj-gray-400 pt-4 sm:pt-6 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
             <Button
               variant="secondary"
               onClick={() => {
-                navigate(ROUTES.HIERARCHY, { state: { focusPersonId: personData.id } });
-                onClose();
+                if (onViewInHierarchy) {
+                  onViewInHierarchy(personData.id);
+                } else {
+                  navigate(ROUTES.HIERARCHY, { state: { focusPersonId: personData.id } });
+                  onClose();
+                }
               }}
               className="w-full sm:w-auto"
             >

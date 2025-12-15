@@ -1,7 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ChevronDown, ChevronRight, Crown } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown, Crown, Users as UsersIcon } from 'lucide-react';
 import { HierarchyNode as HierarchyNodeType } from '../../types/person';
 import { getPersonPhotoUrl } from '../../utils/avatar';
+import { isNodeMatch } from '../../utils/search';
+import { NodeTooltip } from './NodeTooltip';
 
 interface HierarchyNodeProps {
   node: HierarchyNodeType;
@@ -9,6 +12,7 @@ interface HierarchyNodeProps {
   onPersonClick: (personId: string) => void;
   searchTerm?: string;
   focusPersonId?: string;
+  level?: number;
 }
 
 export const HierarchyNode: React.FC<HierarchyNodeProps> = ({
@@ -17,27 +21,22 @@ export const HierarchyNode: React.FC<HierarchyNodeProps> = ({
   onPersonClick,
   searchTerm,
   focusPersonId,
+  level = 0,
 }) => {
-  const [isExpanded, setIsExpanded] = useState<boolean>(isCEO || true);
+  const [isExpanded, setIsExpanded] = useState<boolean>(true);
+  const [isHovered, setIsHovered] = useState(false);
   const hasChildren = node.children && node.children.length > 0;
-  const cardRef = useRef<HTMLDivElement>(null);
 
-  const isMatchingSearch =
-    searchTerm &&
-    (node.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      node.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      node.department.toLowerCase().includes(searchTerm.toLowerCase()));
+  const isMatchingSearch = searchTerm && isNodeMatch(searchTerm, node.name, node.jobTitle, node.department);
 
   const isFocused = focusPersonId === node.id;
 
-  // Verificar se a pessoa focada está nos descendentes
   const hasFocusedDescendant = (currentNode: HierarchyNodeType, targetId: string): boolean => {
     if (currentNode.id === targetId) return true;
     if (!currentNode.children) return false;
     return currentNode.children.some(child => hasFocusedDescendant(child, targetId));
   };
 
-  // Auto-expandir se houver uma pessoa focada nos descendentes
   useEffect(() => {
     if (focusPersonId && hasChildren) {
       const shouldExpand = hasFocusedDescendant(node, focusPersonId);
@@ -47,198 +46,205 @@ export const HierarchyNode: React.FC<HierarchyNodeProps> = ({
     }
   }, [focusPersonId, hasChildren, node]);
 
-  // Scroll até a pessoa focada
-  useEffect(() => {
-    if (isFocused && cardRef.current) {
-      setTimeout(() => {
-        cardRef.current?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center',
-          inline: 'center'
-        });
-      }, 500);
-    }
-  }, [isFocused]);
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
 
   return (
     <div className="flex flex-col items-center relative">
-      {/* Person Card */}
-      <div
-        ref={cardRef}
-        className={`
-          group relative rounded-2xl p-5 cursor-pointer transition-all duration-300 z-10
-          ${isCEO
-            ? 'bg-gradient-to-br from-jnj-red via-red-600 to-jnj-red text-white shadow-2xl border-4 border-red-700 min-w-[340px] hover:shadow-red-500/50'
-            : isFocused
-            ? 'bg-gradient-to-br from-blue-50 to-blue-100 border-4 border-blue-500 shadow-2xl min-w-[280px] animate-pulse'
-            : isMatchingSearch
-            ? 'bg-gradient-to-br from-yellow-50 to-yellow-100 border-2 border-yellow-400 shadow-xl min-w-[280px] hover:shadow-yellow-400/50'
-            : 'bg-white border-2 border-jnj-gray-400 shadow-lg min-w-[280px] hover:shadow-xl hover:border-jnj-red/50'
-          }
-          hover:-translate-y-1 hover:scale-105
-        `}
+      <NodeTooltip node={node} isVisible={isHovered} />
+
+      <motion.div
+        data-person-id={node.id}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={isFocused ? {
+          opacity: 1,
+          scale: [1.05, 1.08, 1.05],
+        } : { opacity: 1, scale: 1 }}
+        transition={isFocused ? {
+          scale: { duration: 1.5, repeat: 2, ease: "easeInOut" },
+          opacity: { duration: 0.3 }
+        } : {
+          duration: 0.3,
+          ease: 'easeOut'
+        }}
+        whileHover={!isFocused ? {
+          y: -4,
+          scale: 1.02,
+          transition: { duration: 0.2, ease: 'easeOut' }
+        } : undefined}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={() => setIsHovered(false)}
         onClick={() => onPersonClick(node.id)}
+        className={`
+          group relative bg-white rounded-xl cursor-pointer transition-all duration-200
+          ${isCEO ? 'min-w-[380px] shadow-lg' : 'min-w-[340px] shadow-md'}
+          ${isFocused ? 'ring-4 ring-jnj-red shadow-2xl bg-red-50' : 'hover:shadow-xl'}
+          ${isMatchingSearch ? 'ring-2 ring-yellow-400' : ''}
+          border border-gray-200 hover:border-gray-300
+        `}
       >
-        {/* CEO Crown */}
         {isCEO && (
-          <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
-            <div className="bg-yellow-400 rounded-full p-2 shadow-lg border-2 border-yellow-500">
-              <Crown className="w-5 h-5 text-yellow-900" />
+          <motion.div
+            initial={{ y: -10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            className="absolute -top-5 left-1/2 transform -translate-x-1/2 z-20"
+          >
+            <div className="bg-jnj-red rounded-full p-2 shadow-lg ring-2 ring-white">
+              <Crown className="w-5 h-5 text-white" fill="currentColor" />
             </div>
-          </div>
+          </motion.div>
         )}
 
-        <div className="flex items-center space-x-4">
-          {/* Avatar */}
-          <div className="relative flex-shrink-0">
-            <div
-              className={`
-                ${isCEO ? 'w-20 h-20' : 'w-16 h-16'}
-                rounded-full overflow-hidden
-                ${isCEO ? 'ring-4 ring-white/30' : 'ring-2 ring-jnj-gray-400'}
-                shadow-lg
-              `}
-            >
-              <img
-                src={getPersonPhotoUrl(node.photoPath, node.id, node.name)}
-                alt={node.name}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  // Se a foto falhar ao carregar, usa o avatar gerado
-                  const target = e.target as HTMLImageElement;
-                  target.src = `https://api.dicebear.com/7.x/personas/svg?seed=${encodeURIComponent(node.id)}&backgroundColor=f0f0f0`;
-                }}
-              />
-            </div>
-            {/* Status Indicator */}
-            <div className={`
-              absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2
-              ${isCEO ? 'border-white' : 'border-white'}
-              ${node.status === 'Active' ? 'bg-green-500' : 'bg-gray-400'}
-            `} />
-          </div>
-
-          {/* Info */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className={`
-                font-bold truncate
-                ${isCEO ? 'text-xl text-white' : 'text-base text-jnj-gray-900'}
-              `}>
-                {node.name}
-              </h3>
-              {isCEO && (
-                <span className="px-2 py-0.5 text-xs font-bold bg-white text-jnj-red rounded-full">
-                  CEO
-                </span>
-              )}
-            </div>
-
-            <p className={`
-              text-sm truncate
-              ${isCEO ? 'text-white/90 font-medium' : 'text-jnj-gray-700'}
-            `}>
-              {node.jobTitle}
-            </p>
-
-            <p className={`
-              text-xs truncate mt-1
-              ${isCEO ? 'text-white/75' : 'text-jnj-gray-700'}
-            `}>
-              {node.department}
-            </p>
-
-            {/* Direct Reports Badge */}
-            {hasChildren && (
+        <div className="p-5">
+          <div className="flex items-start gap-3">
+            <div className="relative flex-shrink-0">
               <div className={`
-                mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold
-                ${isCEO
-                  ? 'bg-white/20 text-white backdrop-blur-sm'
-                  : 'bg-jnj-gray-100 text-jnj-gray-900'
-                }
+                ${isCEO ? 'w-20 h-20' : 'w-16 h-16'}
+                rounded-lg overflow-hidden
+                ring-2 ring-gray-100 group-hover:ring-gray-200 transition-all
               `}>
-                <div className="w-1.5 h-1.5 rounded-full bg-current" />
-                {node.children.length} Direct Report{node.children.length !== 1 ? 's' : ''}
+                <img
+                  src={getPersonPhotoUrl(node.photoPath, node.id, node.name)}
+                  alt={node.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = `https://api.dicebear.com/7.x/personas/svg?seed=${encodeURIComponent(node.id)}&backgroundColor=f0f0f0`;
+                  }}
+                />
               </div>
+
+              <div className={`
+                absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white shadow-sm
+                ${node.status === 'Active' ? 'bg-green-500' : 'bg-gray-400'}
+              `} />
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <div className="flex items-start justify-between gap-2 mb-1">
+                <h3 className={`
+                  font-semibold truncate
+                  ${isCEO ? 'text-lg text-jnj-red' : 'text-base text-gray-900'}
+                `}>
+                  {node.name}
+                </h3>
+                {isCEO && (
+                  <span className="px-2.5 py-1 text-xs font-bold bg-jnj-red text-white rounded-md shadow-sm">
+                    CEO
+                  </span>
+                )}
+              </div>
+
+              <p className="text-sm text-gray-600 truncate mb-2">
+                {node.jobTitle}
+              </p>
+
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 rounded-md text-xs font-medium text-gray-700 border border-gray-200 w-fit">
+                  <div className="w-1.5 h-1.5 rounded-full bg-jnj-red" />
+                  {node.department}
+                </div>
+
+                {hasChildren && (
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 rounded-md text-xs font-semibold text-blue-700 border border-blue-200 w-fit">
+                    <UsersIcon className="w-3.5 h-3.5" />
+                    <span>{node.children.length} {node.children.length === 1 ? 'Report' : 'Reports'}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {hasChildren && (
+              <motion.button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsExpanded(!isExpanded);
+                }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="p-2 rounded-lg hover:bg-jnj-red hover:text-white transition-all flex-shrink-0 text-gray-500 bg-gray-50 border border-gray-200 hover:border-jnj-red"
+                aria-label={isExpanded ? 'Collapse team' : 'Expand team'}
+              >
+                <motion.div
+                  animate={{ rotate: isExpanded ? 0 : -90 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <ChevronDown className="w-4 h-4" />
+                </motion.div>
+              </motion.button>
             )}
           </div>
-
-          {/* Expand/Collapse Button */}
-          {hasChildren && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsExpanded(!isExpanded);
-              }}
-              className={`
-                p-2 rounded-xl transition-all
-                ${isCEO
-                  ? 'hover:bg-white/20 text-white'
-                  : 'hover:bg-jnj-gray-100 text-jnj-gray-700'
-                }
-              `}
-            >
-              {isExpanded ? (
-                <ChevronDown className="w-5 h-5" />
-              ) : (
-                <ChevronRight className="w-5 h-5" />
-              )}
-            </button>
-          )}
         </div>
-      </div>
+      </motion.div>
 
-      {/* Children with connector lines - FIXED APPROACH */}
-      {hasChildren && isExpanded && (
-        <div className="relative mt-16">
-          {/* Vertical line from parent down to horizontal bar - stops at horizontal line */}
-          <div className="absolute bottom-full left-1/2 w-0.5 h-20 -ml-px bg-jnj-gray-700" />
+      <AnimatePresence>
+        {hasChildren && isExpanded && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="flex flex-col items-center"
+          >
+            <div className="w-1 h-16 bg-gray-500" style={{ marginTop: '20px', marginBottom: '0' }} />
 
-          {/* Children container */}
-          <div className="flex items-start justify-center gap-12 relative">
-            {node.children.map((child, index) => {
-              const isFirstChild = index === 0;
-              const isLastChild = index === node.children.length - 1;
-              const hasMultipleChildren = node.children.length > 1;
+            <div className="relative flex items-start justify-center gap-20">
+              {node.children.map((child, index) => {
+                const isFirst = index === 0;
+                const isLast = index === node.children.length - 1;
+                const isOnly = node.children.length === 1;
 
-              return (
-                <div key={child.id} className="relative flex-shrink-0">
-                  {/* Vertical line from horizontal bar to child */}
-                  <div className="absolute -top-8 left-1/2 w-0.5 h-8 -ml-px bg-jnj-gray-700" />
+                return (
+                  <div key={child.id} className="relative flex flex-col items-center">
+                    <div className="w-1 h-16 bg-gray-500" style={{ marginBottom: '20px' }} />
 
-                  {/* Horizontal line segments to create connected bar */}
-                  {hasMultipleChildren && !isLastChild && (
-                    <div
-                      className="absolute -top-8 h-0.5 bg-jnj-gray-700"
-                      style={{
-                        left: '50%',
-                        right: '-3rem', // Extends to the next child (gap-12 = 3rem)
-                      }}
-                    />
-                  )}
-                  {hasMultipleChildren && !isFirstChild && (
-                    <div
-                      className="absolute -top-8 h-0.5 bg-jnj-gray-700"
-                      style={{
-                        right: '50%',
-                        left: '-3rem', // Extends to the previous child (gap-12 = 3rem)
-                      }}
-                    />
-                  )}
+                    {!isOnly && (
+                      <>
+                        {!isFirst && (
+                          <div
+                            className="absolute h-1 bg-gray-500"
+                            style={{
+                              top: '0',
+                              right: '50%',
+                              width: 'calc(50% + 2.5rem)',
+                            }}
+                          />
+                        )}
+                        {!isLast && (
+                          <div
+                            className="absolute h-1 bg-gray-500"
+                            style={{
+                              top: '0',
+                              left: '50%',
+                              width: 'calc(50% + 2.5rem)',
+                            }}
+                          />
+                        )}
+                      </>
+                    )}
 
-                  {/* The child node */}
-                  <HierarchyNode
-                    node={child}
-                    onPersonClick={onPersonClick}
-                    searchTerm={searchTerm}
-                    focusPersonId={focusPersonId}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.08, duration: 0.3, ease: 'easeOut' }}
+                    >
+                      <HierarchyNode
+                        node={child}
+                        onPersonClick={onPersonClick}
+                        searchTerm={searchTerm}
+                        focusPersonId={focusPersonId}
+                        level={level + 1}
+                      />
+                    </motion.div>
+                  </div>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
