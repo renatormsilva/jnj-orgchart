@@ -25,13 +25,13 @@ export const PeopleList: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-display font-bold text-jnj-gray-900">
+      <div className="space-y-2">
+        <h1 className="text-2xl sm:text-3xl font-display font-bold text-jnj-gray-900">
           Our Team
         </h1>
         {data?.data && (
-          <p className="text-jnj-gray-700">
-            Connecting you with {data.data.length} of {data.pagination.total} team members
+          <p className="text-sm sm:text-base text-jnj-gray-700">
+            {data.data.length} of {data.pagination.total} team members
           </p>
         )}
       </div>

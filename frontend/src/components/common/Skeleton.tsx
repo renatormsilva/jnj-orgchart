@@ -119,27 +119,32 @@ export const CardSkeleton: React.FC = () => {
 
 export const HierarchyNodeSkeleton: React.FC = () => {
   return (
-    <div className="flex flex-col items-center space-y-8">
-      <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4 min-w-[280px]">
-        <div className="flex items-start gap-3">
-          <Skeleton variant="circular" width={64} height={64} />
+    <div className="flex flex-col items-center space-y-6 sm:space-y-8 px-4">
+      <div className="bg-white rounded-lg shadow-md border border-gray-200 p-3 sm:p-4 w-full max-w-[280px] sm:min-w-[280px]">
+        <div className="flex items-start gap-2 sm:gap-3">
+          <Skeleton variant="circular" width={48} height={48} className="sm:w-16 sm:h-16" />
           <div className="flex-1">
-            <Skeleton width="80%" height={16} className="mb-2" />
-            <Skeleton width="60%" height={12} className="mb-2" />
-            <Skeleton width="50%" height={10} />
+            <Skeleton width="80%" height={14} className="mb-2 sm:h-4" />
+            <Skeleton width="60%" height={10} className="mb-2 sm:h-3" />
+            <Skeleton width="50%" height={8} className="sm:h-2.5" />
           </div>
         </div>
       </div>
 
-      <div className="flex space-x-12">
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 md:gap-12 items-center">
         {Array.from({ length: 3 }).map((_, index) => (
-          <div key={index} className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 w-[220px]">
+          <div
+            key={index}
+            className={`bg-white rounded-lg shadow-sm border border-gray-200 p-2 sm:p-3 w-full max-w-[240px] sm:w-[180px] md:w-[220px] ${
+              index > 0 ? 'hidden sm:block' : ''
+            } ${index > 1 ? 'hidden md:block' : ''}`}
+          >
             <div className="flex items-start gap-2">
-              <Skeleton variant="circular" width={48} height={48} />
+              <Skeleton variant="circular" width={40} height={40} className="sm:w-12 sm:h-12" />
               <div className="flex-1">
-                <Skeleton width="100%" height={12} className="mb-1" />
-                <Skeleton width="80%" height={10} className="mb-1" />
-                <Skeleton width="60%" height={8} />
+                <Skeleton width="100%" height={10} className="mb-1 sm:h-3" />
+                <Skeleton width="80%" height={8} className="mb-1 sm:h-2.5" />
+                <Skeleton width="60%" height={6} className="sm:h-2" />
               </div>
             </div>
           </div>

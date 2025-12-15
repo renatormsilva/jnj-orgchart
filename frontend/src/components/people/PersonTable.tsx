@@ -43,10 +43,6 @@ export const PersonTable: React.FC<PersonTableProps> = ({ people, onPersonClick 
 
   return (
     <div className="overflow-x-auto bg-white rounded-lg shadow">
-      <div className="sm:hidden bg-jnj-gray-100 px-4 py-2 text-xs text-jnj-gray-700 text-center border-b border-jnj-gray-400">
-        Swipe left to see more →
-      </div>
-
       <table className="min-w-full divide-y divide-jnj-gray-400">
         <thead className="bg-jnj-gray-100">
           <tr>
@@ -74,7 +70,7 @@ export const PersonTable: React.FC<PersonTableProps> = ({ people, onPersonClick 
               </div>
             </th>
             <th
-              className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-jnj-gray-900 uppercase tracking-wider cursor-pointer hover:bg-jnj-gray-400"
+              className="hidden md:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-jnj-gray-900 uppercase tracking-wider cursor-pointer hover:bg-jnj-gray-400"
               onClick={() => handleSort('department')}
               aria-label="Sort by department"
             >
@@ -83,10 +79,10 @@ export const PersonTable: React.FC<PersonTableProps> = ({ people, onPersonClick 
                 <SortIcon field="department" />
               </div>
             </th>
-            <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-jnj-gray-900 uppercase tracking-wider">
+            <th className="hidden lg:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-jnj-gray-900 uppercase tracking-wider">
               Type
             </th>
-            <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-jnj-gray-900 uppercase tracking-wider">
+            <th className="hidden lg:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium text-jnj-gray-900 uppercase tracking-wider">
               Status
             </th>
           </tr>
@@ -127,13 +123,13 @@ export const PersonTable: React.FC<PersonTableProps> = ({ people, onPersonClick 
               <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                 <div className="text-sm text-jnj-gray-900">{person.jobTitle}</div>
               </td>
-              <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
+              <td className="hidden md:table-cell px-3 sm:px-6 py-4 whitespace-nowrap">
                 <div className="text-sm text-jnj-gray-900">{person.department}</div>
               </td>
-              <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
+              <td className="hidden lg:table-cell px-3 sm:px-6 py-4 whitespace-nowrap">
                 <Badge type="type" value={person.type} />
               </td>
-              <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
+              <td className="hidden lg:table-cell px-3 sm:px-6 py-4 whitespace-nowrap">
                 <Badge type="status" value={person.status} />
               </td>
             </tr>

@@ -110,13 +110,13 @@ export const HierarchySearch: React.FC<HierarchySearchProps> = ({
   };
 
   return (
-    <div className="relative flex-1 max-w-lg">
+    <div className="relative flex-1 w-full sm:max-w-lg">
       <div className="relative">
-        <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <Search className="absolute left-2.5 sm:left-3.5 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
         <input
           ref={inputRef}
           type="text"
-          placeholder="Search by name, title, or department..."
+          placeholder="Search team members..."
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value);
@@ -124,14 +124,14 @@ export const HierarchySearch: React.FC<HierarchySearchProps> = ({
           }}
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
-          className="w-full pl-11 pr-10 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-jnj-red focus:border-jnj-red transition-all bg-white text-gray-900 placeholder-gray-500"
+          className="w-full pl-9 sm:pl-11 pr-9 sm:pr-10 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-jnj-red focus:border-jnj-red transition-all bg-white text-gray-900 placeholder-gray-500"
         />
         {searchTerm && (
           <button
             onClick={handleClear}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-100 rounded-full transition-colors"
+            className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-100 rounded-full transition-colors"
           >
-            <X className="w-4 h-4 text-gray-400" />
+            <X className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400" />
           </button>
         )}
       </div>
@@ -146,13 +146,13 @@ export const HierarchySearch: React.FC<HierarchySearchProps> = ({
             transition={{ duration: 0.15 }}
             className="absolute z-50 w-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden"
           >
-            <div className="p-2 border-b border-gray-100 bg-gray-50">
+            <div className="p-1.5 sm:p-2 border-b border-gray-100 bg-gray-50">
               <p className="text-xs text-gray-500 font-medium">
-                {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found
+                {searchResults.length} result{searchResults.length !== 1 ? 's' : ''}
               </p>
             </div>
 
-            <div className="max-h-80 overflow-y-auto">
+            <div className="max-h-[60vh] sm:max-h-80 overflow-y-auto">
               {searchResults.map((result, index) => (
                 <motion.button
                   key={result.id}
@@ -162,7 +162,7 @@ export const HierarchySearch: React.FC<HierarchySearchProps> = ({
                   onClick={() => handleSelectResult(result)}
                   onMouseEnter={() => setSelectedIndex(index)}
                   className={`
-                    w-full flex items-center gap-3 p-3 text-left transition-all
+                    w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 text-left transition-all
                     ${selectedIndex === index ? 'bg-jnj-red/10' : 'hover:bg-gray-50'}
                   `}
                 >
@@ -170,7 +170,7 @@ export const HierarchySearch: React.FC<HierarchySearchProps> = ({
                     <img
                       src={getPersonPhotoUrl(result.photoPath, result.id, result.name)}
                       alt={result.name}
-                      className="w-12 h-12 rounded-lg object-cover ring-2 ring-gray-100"
+                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover ring-2 ring-gray-100"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.src = `https://api.dicebear.com/7.x/personas/svg?seed=${encodeURIComponent(result.id)}&backgroundColor=f0f0f0`;
@@ -179,27 +179,27 @@ export const HierarchySearch: React.FC<HierarchySearchProps> = ({
                     {selectedIndex === index && (
                       <motion.div
                         layoutId="selected-indicator"
-                        className="absolute -left-1 top-1/2 -translate-y-1/2 w-1 h-8 bg-jnj-red rounded-full"
+                        className="absolute -left-1 top-1/2 -translate-y-1/2 w-1 h-6 sm:h-8 bg-jnj-red rounded-full"
                       />
                     )}
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <User className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
-                      <p className="font-semibold text-gray-900 truncate">
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                      <User className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-400 flex-shrink-0 hidden sm:block" />
+                      <p className="text-sm sm:text-base font-semibold text-gray-900 truncate">
                         {highlightMatch(result.name, result.matchedFields.includes('name'))}
                       </p>
                     </div>
 
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <Briefcase className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
-                      <p className="text-sm text-gray-600 truncate">
+                    <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5">
+                      <Briefcase className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-400 flex-shrink-0 hidden sm:block" />
+                      <p className="text-xs sm:text-sm text-gray-600 truncate">
                         {highlightMatch(result.jobTitle, result.matchedFields.includes('jobTitle'))}
                       </p>
                     </div>
 
-                    <div className="flex items-center gap-2 mt-0.5">
+                    <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5 hidden sm:flex">
                       <Building2 className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
                       <p className="text-xs text-gray-500 truncate">
                         {highlightMatch(result.department, result.matchedFields.includes('department'))}
@@ -207,16 +207,16 @@ export const HierarchySearch: React.FC<HierarchySearchProps> = ({
                     </div>
                   </div>
 
-                  <div className="flex-shrink-0">
+                  <div className="flex-shrink-0 hidden sm:block">
                     <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-md">
-                      Enter ↵
+                      ↵
                     </span>
                   </div>
                 </motion.button>
               ))}
             </div>
 
-            <div className="p-2 border-t border-gray-100 bg-gray-50">
+            <div className="p-1.5 sm:p-2 border-t border-gray-100 bg-gray-50 hidden sm:block">
               <p className="text-xs text-gray-400 text-center">
                 Use ↑↓ to navigate • Enter to select • Esc to close
               </p>
