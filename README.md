@@ -10,8 +10,9 @@ A full-stack web application that displays an organizational chart from a list o
 ## 🔗 Links
 
 ### Production
-- **Frontend Application:** [https://jnj-orgchart-hkdlt9411-renatormsilvas-projects.vercel.app](https://jnj-orgchart-hkdlt9411-renatormsilvas-projects.vercel.app)
-- **Backend API:** [https://jnj-orgchart-production.up.railway.app/api/v1](https://jnj-orgchart-production.up.railway.app/api/v1)
+- **Frontend Application:** [https://jnj-orgchart.vercel.app](https://jnj-orgchart.vercel.app)
+- **Backend API:** https://jnj-orgchart-production.up.railway.app
+  - **API Routes:** `/api/v1/people`, `/api/v1/hierarchy`, `/api/v1/statistics`
 - **API Documentation (Swagger):** [https://jnj-orgchart-production.up.railway.app/docs](https://jnj-orgchart-production.up.railway.app/docs)
 - **API Health Check:** [https://jnj-orgchart-production.up.railway.app/health](https://jnj-orgchart-production.up.railway.app/health)
 
@@ -106,7 +107,8 @@ cd frontend && npm run dev
 ### Access the Application
 
 - **Frontend:** http://localhost:5173
-- **Backend API:** http://localhost:3000/api/v1
+- **Backend API:** http://localhost:3000
+  - **API Routes:** `/api/v1/people`, `/api/v1/hierarchy`, `/api/v1/statistics`
 - **Swagger Docs:** http://localhost:3000/docs
 - **Health Check:** http://localhost:3000/health
 
