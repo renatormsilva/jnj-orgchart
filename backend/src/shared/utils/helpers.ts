@@ -1,14 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { PaginatedResponse, PaginationParams } from '../types';
 
-/**
- * Generate a unique identifier
- */
 export const generateId = (): string => uuidv4();
 
-/**
- * Create a paginated response object
- */
 export const createPaginatedResponse = <T>(
   data: T[],
   total: number,
@@ -29,23 +23,14 @@ export const createPaginatedResponse = <T>(
   };
 };
 
-/**
- * Build offset from pagination params
- */
 export const getOffset = (pagination: PaginationParams): number => {
   return (pagination.page - 1) * pagination.limit;
 };
 
-/**
- * Delay execution (useful for testing)
- */
 export const delay = (ms: number): Promise<void> => {
   return new Promise(resolve => setTimeout(resolve, ms));
 };
 
-/**
- * Safe JSON parse
- */
 export const safeJsonParse = <T>(json: string, fallback: T): T => {
   try {
     return JSON.parse(json) as T;
@@ -54,9 +39,6 @@ export const safeJsonParse = <T>(json: string, fallback: T): T => {
   }
 };
 
-/**
- * Omit keys from object
- */
 export const omit = <T extends Record<string, unknown>, K extends keyof T>(
   obj: T,
   keys: K[]
@@ -66,9 +48,6 @@ export const omit = <T extends Record<string, unknown>, K extends keyof T>(
   return result;
 };
 
-/**
- * Pick keys from object
- */
 export const pick = <T extends Record<string, unknown>, K extends keyof T>(
   obj: T,
   keys: K[]

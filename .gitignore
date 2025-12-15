@@ -35,6 +35,13 @@ brand-guide.md
 brand-guidelines.pdf
 IMPLEMENTATION_GUIDE.md
 GAP_ANALYSIS.md
+ARCHITECTURE.md
+
+# Redundant READMEs (main README.md has everything)
+backend/README.md
+backend/ARCHITECTURE.md
+backend/PHOTO_MANAGEMENT.md
+frontend/README.md
 
 # Misc
 nul

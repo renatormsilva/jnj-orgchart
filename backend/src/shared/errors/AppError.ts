@@ -1,7 +1,3 @@
-// ============================================
-// Application Error Classes
-// ============================================
-
 export abstract class AppError extends Error {
   public readonly statusCode: number;
   public readonly isOperational: boolean;

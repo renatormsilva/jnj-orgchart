@@ -12,9 +12,10 @@ import { getPersonPhotoUrl } from '../../utils/avatar';
 interface PersonDetailsProps {
   personId: string;
   onClose: () => void;
+  onPersonChange?: (newPersonId: string) => void;
 }
 
-export const PersonDetails: React.FC<PersonDetailsProps> = ({ personId, onClose }) => {
+export const PersonDetails: React.FC<PersonDetailsProps> = ({ personId, onClose, onPersonChange }) => {
   const navigate = useNavigate();
   const { data: personData, isLoading, error } = usePerson(personId);
   const { data: managementChain } = useManagementChain(personId);
@@ -176,7 +177,10 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({ personId, onClose 
               <h4 className="font-display font-semibold text-jnj-gray-900 mb-3">
                 Reports To
               </h4>
-              <div className="bg-jnj-gray-100 rounded-lg p-4 flex items-center space-x-4">
+              <div
+                onClick={() => onPersonChange?.(String(personData.manager!.id))}
+                className="bg-jnj-gray-100 rounded-lg p-4 flex items-center space-x-4 cursor-pointer hover:bg-jnj-gray-200 transition-colors"
+              >
                 <img
                   src={getPersonPhotoUrl(personData.manager.photoPath, personData.manager.id, personData.manager.name)}
                   alt={personData.manager.name}
@@ -188,7 +192,7 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({ personId, onClose 
                     }
                   }}
                 />
-                <div>
+                <div className="flex-1">
                   <p className="font-medium text-jnj-gray-900">
                     {personData.manager.name}
                   </p>
@@ -196,6 +200,7 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({ personId, onClose 
                     {personData.manager.jobTitle}
                   </p>
                 </div>
+                <span className="text-jnj-red text-sm font-medium">View →</span>
               </div>
             </div>
           )}
@@ -210,7 +215,8 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({ personId, onClose 
                 {personData.directReports.map((report) => (
                   <div
                     key={report.id}
-                    className="bg-jnj-gray-100 rounded-lg p-3 flex items-center space-x-3"
+                    onClick={() => onPersonChange?.(String(report.id))}
+                    className="bg-jnj-gray-100 rounded-lg p-3 flex items-center space-x-3 cursor-pointer hover:bg-jnj-gray-200 transition-colors"
                   >
                     <img
                       src={getPersonPhotoUrl(report.photoPath, report.id, report.name)}
@@ -229,6 +235,7 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({ personId, onClose 
                         {report.jobTitle}
                       </p>
                     </div>
+                    <span className="text-jnj-red text-sm font-medium">→</span>
                   </div>
                 ))}
               </div>
@@ -244,9 +251,12 @@ export const PersonDetails: React.FC<PersonDetailsProps> = ({ personId, onClose 
               <div className="flex flex-wrap items-center gap-2">
                 {managementChain.map((manager, index) => (
                   <React.Fragment key={manager.id}>
-                    <span className="text-sm font-medium text-jnj-gray-900">
+                    <button
+                      onClick={() => onPersonChange?.(String(manager.id))}
+                      className="text-sm font-medium text-jnj-red hover:underline cursor-pointer"
+                    >
                       {manager.name}
-                    </span>
+                    </button>
                     {index < managementChain.length - 1 && (
                       <span className="text-jnj-gray-700">→</span>
                     )}

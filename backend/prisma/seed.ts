@@ -1,7 +1,3 @@
-// ============================================
-// Database Seed - Using org-chart-people-100.json
-// ============================================
-
 import { PrismaClient, PersonType, PersonStatus } from '@prisma/client';
 import * as fs from 'fs';
 import * as path from 'path';

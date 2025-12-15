@@ -7,7 +7,7 @@ export function usePeople(filters: PersonFilters = {}, page: number = 1, limit: 
   return useQuery({
     queryKey: [QUERY_KEYS.PEOPLE, filters, page, limit],
     queryFn: () => peopleApi.getPeople(filters, page, limit),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000, 
   });
 }
 
@@ -33,7 +33,7 @@ export function useHierarchy() {
   return useQuery({
     queryKey: [QUERY_KEYS.HIERARCHY],
     queryFn: () => peopleApi.getHierarchy(),
-    staleTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 10 * 60 * 1000, 
   });
 }
 

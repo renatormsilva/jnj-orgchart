@@ -70,6 +70,5 @@ export interface Statistics {
   totalPartners: number;
   totalActive: number;
   totalInactive: number;
-  totalDepartments: number;
-  totalManagers: number;
+  departments: Department[];
 }

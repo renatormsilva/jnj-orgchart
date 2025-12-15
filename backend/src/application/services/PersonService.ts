@@ -1,7 +1,3 @@
-// ============================================
-// Person Service - Application Layer
-// ============================================
-
 import { IPersonRepository } from '../../domain/interfaces/IPersonRepository';
 import { PersonProps, CreatePersonProps, UpdatePersonProps } from '../../domain/entities/Person';
 import { PersonStatus, PersonType } from '../../domain/valueObjects';
@@ -9,10 +5,6 @@ import { PaginatedResponse } from '../../shared/types';
 import { ValidationError, NotFoundError } from '../../shared/errors/AppError';
 import { logger } from '../../config/logger';
 import { PersonEvents, EventMetadata } from './EventService';
-
-// ============================================
-// DTOs
-// ============================================
 
 export interface GetPeopleQuery {
   page: number;
@@ -48,6 +40,10 @@ export interface PersonDetailResponse extends PersonResponse {
   directReports: PersonResponse[];
 }
 
+export interface ManagerResponse extends PersonResponse {
+  directReportsCount: number;
+}
+
 export interface HierarchyNode {
   id: number;
   name: string;
@@ -68,16 +64,9 @@ export interface Statistics {
   departments: Array<{ name: string; count: number }>;
 }
 
-// ============================================
-// Service
-// ============================================
-
 export class PersonService {
   constructor(private readonly repository: IPersonRepository) {}
 
-  /**
-   * Get paginated list of people with filters
-   */
   async getAll(query: GetPeopleQuery): Promise<PaginatedResponse<PersonResponse>> {
     const result = await this.repository.findAll({
       pagination: { page: query.page, limit: query.limit },
@@ -102,9 +91,6 @@ export class PersonService {
     };
   }
 
-  /**
-   * Get person by ID with manager and direct reports
-   */
   async getById(id: number): Promise<PersonDetailResponse> {
     const person = await this.repository.findByIdWithRelations(id);
 
@@ -119,9 +105,6 @@ export class PersonService {
     };
   }
 
-  /**
-   * Get management chain (path to CEO)
-   */
   async getManagementChain(personId: number): Promise<PersonResponse[]> {
     const exists = await this.repository.exists(personId);
     if (!exists) {
@@ -132,31 +115,22 @@ export class PersonService {
     return chain.map(p => this.toResponse(p));
   }
 
-  /**
-   * Get organizational hierarchy tree
-   */
   async getHierarchy(rootId?: number): Promise<HierarchyNode> {
     return this.repository.getHierarchyTree(rootId);
   }
 
-  /**
-   * Get all unique departments
-   */
   async getDepartments(): Promise<string[]> {
     return this.repository.getDepartments();
   }
 
-  /**
-   * Get all managers (people with direct reports)
-   */
-  async getManagers(): Promise<PersonResponse[]> {
+  async getManagers(): Promise<ManagerResponse[]> {
     const managers = await this.repository.getManagers();
-    return managers.map(p => this.toResponse(p));
+    return managers.map(p => ({
+      ...this.toResponse(p),
+      directReportsCount: p.directReportsCount,
+    }));
   }
 
-  /**
-   * Get organization statistics
-   */
   async getStatistics(): Promise<Statistics> {
     const [totalPeople, totalEmployees, totalPartners, totalActive, totalInactive, departments] =
       await Promise.all([
@@ -186,9 +160,6 @@ export class PersonService {
     };
   }
 
-  /**
-   * Create a new person
-   */
   async create(data: CreatePersonProps, metadata?: EventMetadata): Promise<PersonResponse> {
     // Validate manager exists if provided
     if (data.managerId) {
@@ -207,9 +178,6 @@ export class PersonService {
     return this.toResponse(person);
   }
 
-  /**
-   * Update an existing person
-   */
   async update(
     id: number,
     data: UpdatePersonProps,
@@ -257,9 +225,6 @@ export class PersonService {
     return this.toResponse(person);
   }
 
-  /**
-   * Delete a person
-   */
   async delete(id: number, metadata?: EventMetadata): Promise<void> {
     // Get person data before deletion for event payload
     const person = await this.repository.findById(id);
@@ -274,9 +239,6 @@ export class PersonService {
     await PersonEvents.deleted(id, { ...person }, metadata);
   }
 
-  /**
-   * Convert domain entity to response DTO
-   */
   private toResponse(person: PersonProps): PersonResponse {
     return {
       id: person.id,

@@ -1,7 +1,3 @@
-// ============================================
-// Prisma Person Repository - Infrastructure Layer
-// ============================================
-
 import { Prisma } from '@prisma/client';
 import { prisma } from '../database/prisma';
 import {
@@ -26,9 +22,6 @@ import { logger } from '../../config/logger';
 type PrismaPerson = NonNullable<Awaited<ReturnType<typeof prisma.person.findFirst>>>;
 
 export class PrismaPersonRepository implements IPersonRepository {
-  /**
-   * Build where clause from filter
-   */
   private buildWhereClause(filter?: PersonFilter): Prisma.PersonWhereInput {
     const where: Prisma.PersonWhereInput = {};
 
@@ -59,9 +52,6 @@ export class PrismaPersonRepository implements IPersonRepository {
     return where;
   }
 
-  /**
-   * Map Prisma Person to PersonProps
-   */
   private mapToPersonProps(person: PrismaPerson): PersonProps {
     return {
       id: person.id,
@@ -267,7 +257,7 @@ export class PrismaPersonRepository implements IPersonRepository {
     }
   }
 
-  async getManagers(): Promise<PersonProps[]> {
+  async getManagers(): Promise<(PersonProps & { directReportsCount: number })[]> {
     try {
       const managers = await prisma.person.findMany({
         where: {
@@ -276,9 +266,17 @@ export class PrismaPersonRepository implements IPersonRepository {
           },
         },
         orderBy: { name: 'asc' },
+        include: {
+          _count: {
+            select: { directReports: true },
+          },
+        },
       });
 
-      return managers.map(p => this.mapToPersonProps(p));
+      return managers.map(p => ({
+        ...this.mapToPersonProps(p),
+        directReportsCount: p._count.directReports,
+      }));
     } catch (error) {
       logger.error({ error }, 'Failed to fetch managers');
       throw new DatabaseError('Failed to fetch managers');

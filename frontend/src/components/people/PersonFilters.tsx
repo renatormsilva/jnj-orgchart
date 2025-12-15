@@ -8,8 +8,8 @@ import { useDebounce } from '../../hooks/useDebounce';
 
 export const PersonFilters: React.FC = () => {
   const { filters, setFilters, resetFilters } = useFiltersStore();
-  const { data: departments } = useDepartments();
-  const { data: managers } = useManagers();
+  const { data: departments, isLoading: isLoadingDepartments } = useDepartments();
+  const { data: managers, isLoading: isLoadingManagers } = useManagers();
 
   const [searchInput, setSearchInput] = React.useState(filters.search || '');
   const debouncedSearch = useDebounce(searchInput, 500);
@@ -76,10 +76,13 @@ export const PersonFilters: React.FC = () => {
             onChange={(e) =>
               setFilters({ department: e.target.value || undefined })
             }
-            className="w-full px-3 py-2 border border-jnj-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-jnj-red focus:border-transparent"
+            disabled={isLoadingDepartments}
+            className="w-full px-3 py-2 border border-jnj-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-jnj-red focus:border-transparent disabled:bg-jnj-gray-100 disabled:cursor-wait"
             aria-label="Filter by department"
           >
-            <option value="">All Departments</option>
+            <option value="">
+              {isLoadingDepartments ? 'Loading departments...' : 'All Departments'}
+            </option>
             {departments?.map((dept) => (
               <option key={dept.name} value={dept.name}>
                 {dept.name} ({dept.count})
@@ -99,10 +102,13 @@ export const PersonFilters: React.FC = () => {
             onChange={(e) =>
               setFilters({ managerId: e.target.value || undefined })
             }
-            className="w-full px-3 py-2 border border-jnj-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-jnj-red focus:border-transparent"
+            disabled={isLoadingManagers}
+            className="w-full px-3 py-2 border border-jnj-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-jnj-red focus:border-transparent disabled:bg-jnj-gray-100 disabled:cursor-wait"
             aria-label="Filter by manager"
           >
-            <option value="">All Managers</option>
+            <option value="">
+              {isLoadingManagers ? 'Loading managers...' : 'All Managers'}
+            </option>
             {managers?.map((manager) => (
               <option key={manager.id} value={manager.id}>
                 {manager.name} - {manager.jobTitle} ({manager.directReportsCount})

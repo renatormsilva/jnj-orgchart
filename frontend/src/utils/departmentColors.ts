@@ -1,16 +1,14 @@
-// Minimalist color system using J&J brand colors only
-// Tier S+ design: clean, professional, not colorful
 export const DEPARTMENT_COLORS = {
   Executive: {
-    primary: '#EB1700', // J&J Red
-    light: '#FEF2F2',   // Very subtle red tint
-    border: '#DC2626',  // Slightly darker red
+    primary: '#EB1700',
+    light: '#FEF2F2',
+    border: '#DC2626',
     gradient: 'from-white via-gray-50 to-white',
   },
   default: {
-    primary: '#374151', // gray-700
-    light: '#FFFFFF',   // Pure white
-    border: '#D1D5DB',  // gray-300 - subtle border
+    primary: '#374151',
+    light: '#FFFFFF',
+    border: '#D1D5DB',
     gradient: 'from-white via-gray-50 to-white',
   },
 };

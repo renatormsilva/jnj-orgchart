@@ -205,13 +205,14 @@ describe('PersonService', () => {
   });
 
   describe('getManagers', () => {
-    it('should return list of managers', async () => {
-      mockRepository.getManagers.mockResolvedValue([mockPerson]);
+    it('should return list of managers with directReportsCount', async () => {
+      mockRepository.getManagers.mockResolvedValue([{ ...mockPerson, directReportsCount: 5 }]);
 
       const result = await service.getManagers();
 
       expect(result).toHaveLength(1);
       expect(result[0]?.name).toBe('John Doe');
+      expect(result[0]?.directReportsCount).toBe(5);
     });
   });
 

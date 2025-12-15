@@ -73,23 +73,29 @@ export const HierarchyNodePremium: React.FC<HierarchyNodeProps> = ({
       <motion.div
         ref={cardRef}
         initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{
+        animate={isFocused ? {
+          opacity: 1,
+          scale: [1.05, 1.08, 1.05],
+        } : { opacity: 1, scale: 1 }}
+        transition={isFocused ? {
+          scale: { duration: 1.5, repeat: 2, ease: "easeInOut" },
+          opacity: { duration: 0.3 }
+        } : {
           duration: 0.3,
           ease: 'easeOut'
         }}
-        whileHover={{
+        whileHover={!isFocused ? {
           y: -4,
           scale: 1.02,
           transition: { duration: 0.2, ease: 'easeOut' }
-        }}
+        } : undefined}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={() => setIsHovered(false)}
         onClick={() => onPersonClick(node.id)}
         className={`
           group relative bg-white rounded-xl cursor-pointer transition-all duration-200
           ${isCEO ? 'min-w-[380px] shadow-lg' : 'min-w-[340px] shadow-md'}
-          ${isFocused ? 'ring-2 ring-jnj-red shadow-xl' : 'hover:shadow-xl'}
+          ${isFocused ? 'ring-4 ring-jnj-red shadow-2xl bg-red-50' : 'hover:shadow-xl'}
           ${isMatchingSearch ? 'ring-2 ring-yellow-400' : ''}
           border border-gray-200 hover:border-gray-300
         `}

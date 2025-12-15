@@ -1,7 +1,3 @@
-// ============================================
-// Event Service Tests
-// ============================================
-
 import { EventService, PersonEvents } from './EventService';
 import { prisma } from '../../infrastructure/database/prisma';
 

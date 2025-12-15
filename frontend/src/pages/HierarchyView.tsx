@@ -7,7 +7,6 @@ export const HierarchyView: React.FC = () => {
   const location = useLocation();
   const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
 
-  // Ler o ID da pessoa para focar (se houver)
   const focusPersonId = location.state?.focusPersonId;
 
   return (
@@ -30,6 +29,7 @@ export const HierarchyView: React.FC = () => {
         <PersonDetails
           personId={selectedPersonId}
           onClose={() => setSelectedPersonId(null)}
+          onPersonChange={(newPersonId) => setSelectedPersonId(newPersonId)}
         />
       )}
     </div>

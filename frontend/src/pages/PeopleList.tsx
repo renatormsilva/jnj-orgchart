@@ -109,6 +109,7 @@ export const PeopleList: React.FC = () => {
         <PersonDetails
           personId={selectedPersonId}
           onClose={() => setSelectedPersonId(null)}
+          onPersonChange={(newPersonId) => setSelectedPersonId(newPersonId)}
         />
       )}
     </div>
